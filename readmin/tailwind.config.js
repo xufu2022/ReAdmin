@@ -4,19 +4,18 @@ export default {
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
-  darkMode: 'class',
   theme: {
     extend: {
+      // Add your custom theme extensions here
       colors: {
-        primary: {
-          50: '#eff6ff',
-          500: '#3b82f6',
-          600: '#2563eb',
-          700: '#1d4ed8',
-          900: '#1e3a8a',
-        },
+        // Custom colors
+      },
+      fontFamily: {
+        // Custom fonts
       },
     },
   },
-  plugins: [],
+  plugins: [
+    // Add plugins here
+  ],
 }
