@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DashSpace - Dashboard Layout Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+        }
+        
+        /* Layout Container */
+        .app-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Header */
+        .header {
+            background: white;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 0 24px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: fixed;
+            top: 0;
+            left: 280px;
+            right: 0;
+            z-index: 100;
+            transition: left 0.3s ease;
+        }
+        
+        .header.collapsed {
+            left: 72px;
+        }
+        
+        .header.mobile {
+            left: 0;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            background: #1e293b;
+            width: 280px;
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            z-index: 200;
+            transition: width 0.3s ease;
+            overflow: hidden;
+        }
+        
+        .sidebar.collapsed {
+            width: 72px;
+        }
+        
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid #334155;
+        }
+        
+        .logo {
+            color: white;
+            font-size: 20px;
+            font-weight: 700;
+        }
+        
+        .sidebar-nav {
+            padding: 20px 0;
+        }
+        
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            color: #94a3b8;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        
+        .nav-item:hover {
+            background: #334155;
+            color: white;
+        }
+        
+        .nav-item.active {
+            background: #3b82f6;
+            color: white;
+        }
+        
+        .nav-icon {
+            width: 20px;
+            margin-right: 12px;
+        }
+        
+        /* Main Content */
+        .main-content {
+            margin-left: 280px;
+            margin-top: 64px;
+            padding: 24px;
+            min-height: calc(100vh - 64px);
+            transition: margin-left 0.3s ease;
+        }
+        
+        .main-content.collapsed {
+            margin-left: 72px;
+        }
+        
+        .main-content.mobile {
+            margin-left: 0;
+        }
+        
+        /* Dashboard Cards */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e2e8f0;
+        }
+        
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: #1e293b;
+        }
+        
+        .metric {
+            font-size: 32px;
+            font-weight: 700;
+            color: #3b82f6;
+        }
+        
+        .metric-label {
+            color: #64748b;
+            font-size: 14px;
+            margin-top: 4px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.mobile-open {
+                transform: translateX(0);
+            }
+            
+            .header {
+                left: 0;
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+        }
+        
+        /* Toggle Button */
+        .sidebar-toggle {
+            background: none;
+            border: none;
+            padding: 8px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        
+        .sidebar-toggle:hover {
+            background: #f1f5f9;
+        }
+        
+        /* Dark Mode Styles */
+        .dark {
+            background-color: #0f172a;
+            color: #e2e8f0;
+        }
+        
+        .dark .header {
+            background: #1e293b;
+            border-bottom-color: #334155;
+        }
+        
+        .dark .card {
+            background: #1e293b;
+            border-color: #334155;
+        }
+        
+        .dark .card-title {
+            color: #e2e8f0;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">DashSpace</div>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active">
+                    <span class="nav-icon">📊</span>
+                    <span class="nav-text">Dashboard</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <span class="nav-icon">👥</span>
+                    <span class="nav-text">Users</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <span class="nav-icon">📈</span>
+                    <span class="nav-text">Analytics</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <span class="nav-icon">⚙️</span>
+                    <span class="nav-text">Settings</span>
+                </a>
+            </nav>
+        </aside>
+        
+        <!-- Header -->
+        <header class="header" id="header">
+            <div style="display: flex; align-items: center;">
+                <button class="sidebar-toggle" onclick="toggleSidebar()">
+                    <span style="font-size: 18px;">☰</span>
+                </button>
+                <h1 style="margin-left: 16px; font-size: 18px; font-weight: 600;">Dashboard</h1>
+            </div>
+            <div style="display: flex; align-items: center; gap: 16px;">
+                <button onclick="toggleDarkMode()" style="background: none; border: none; padding: 8px; cursor: pointer; border-radius: 4px;">
+                    <span id="theme-icon">🌙</span>
+                </button>
+                <div style="width: 32px; height: 32px; background: #3b82f6; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600;">
+                    U
+                </div>
+            </div>
+        </header>
+        
+        <!-- Main Content -->
+        <main class="main-content" id="mainContent">
+            <div class="dashboard-grid">
+                <div class="card">
+                    <h3 class="card-title">Total Revenue</h3>
+                    <div class="metric">$45,231</div>
+                    <div class="metric-label">+20.1% from last month</div>
+                </div>
+                
+                <div class="card">
+                    <h3 class="card-title">Active Users</h3>
+                    <div class="metric">2,350</div>
+                    <div class="metric-label">+180 new users</div>
+                </div>
+                
+                <div class="card">
+                    <h3 class="card-title">Orders</h3>
+                    <div class="metric">12,234</div>
+                    <div class="metric-label">+19% from last month</div>
+                </div>
+                
+                <div class="card">
+                    <h3 class="card-title">Conversion Rate</h3>
+                    <div class="metric">3.24%</div>
+                    <div class="metric-label">+0.5% from last month</div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3 class="card-title">Recent Activity</h3>
+                <div style="margin-top: 16px;">
+                    <div style="padding: 12px 0; border-bottom: 1px solid #e2e8f0;">
+                        <div style="font-weight: 600;">New user registered</div>
+                        <div style="color: #64748b; font-size: 14px;">2 minutes ago</div>
+                    </div>
+                    <div style="padding: 12px 0; border-bottom: 1px solid #e2e8f0;">
+                        <div style="font-weight: 600;">Order #1234 completed</div>
+                        <div style="color: #64748b; font-size: 14px;">5 minutes ago</div>
+                    </div>
+                    <div style="padding: 12px 0;">
+                        <div style="font-weight: 600;">Payment received</div>
+                        <div style="color: #64748b; font-size: 14px;">10 minutes ago</div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        let sidebarCollapsed = false;
+        let darkMode = false;
+        
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const header = document.getElementById('header');
+            const mainContent = document.getElementById('mainContent');
+            
+            sidebarCollapsed = !sidebarCollapsed;
+            
+            if (window.innerWidth > 1024) {
+                if (sidebarCollapsed) {
+                    sidebar.classList.add('collapsed');
+                    header.classList.add('collapsed');
+                    mainContent.classList.add('collapsed');
+                } else {
+                    sidebar.classList.remove('collapsed');
+                    header.classList.remove('collapsed');
+                    mainContent.classList.remove('collapsed');
+                }
+            } else {
+                // Mobile behavior
+                sidebar.classList.toggle('mobile-open');
+            }
+        }
+        
+        function toggleDarkMode() {
+            const body = document.body;
+            const themeIcon = document.getElementById('theme-icon');
+            
+            darkMode = !darkMode;
+            
+            if (darkMode) {
+                body.classList.add('dark');
+                themeIcon.textContent = '☀️';
+            } else {
+                body.classList.remove('dark');
+                themeIcon.textContent = '🌙';
+            }
+        }
+        
+        // Handle responsive behavior
+        window.addEventListener('resize', function() {
+            const sidebar = document.getElementById('sidebar');
+            const header = document.getElementById('header');
+            const mainContent = document.getElementById('mainContent');
+            
+            if (window.innerWidth <= 1024) {
+                header.classList.add('mobile');
+                mainContent.classList.add('mobile');
+                sidebar.classList.remove('collapsed');
+            } else {
+                header.classList.remove('mobile');
+                mainContent.classList.remove('mobile');
+                sidebar.classList.remove('mobile-open');
+                
+                if (sidebarCollapsed) {
+                    sidebar.classList.add('collapsed');
+                    header.classList.add('collapsed');
+                    mainContent.classList.add('collapsed');
+                }
+            }
+        });
+        
+        // Initialize responsive state
+        window.dispatchEvent(new Event('resize'));
+    </script>
+</body>
+</html>
